@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="1024"
+   viewBox="0 0 270.93332 270.93334"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="grid-2x3-inverted-circle.svg"
+   inkscape:export-filename="/data/1-ai-data/dev/wasta-images/wasta-images/2019-logos/w-dark-22.png"
+   inkscape:export-xdpi="2.0599999"
+   inkscape:export-ydpi="2.0599999"
+   style="enable-background:new">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.5"
+     inkscape:cx="157.79379"
+     inkscape:cy="745.06038"
+     inkscape:document-units="px"
+     inkscape:current-layer="g957"
+     showgrid="false"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1019"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     scale-x="0.26458" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     style="display:inline"
+     inkscape:label="grid 2x3 inverted circle"
+     id="g957"
+     inkscape:groupmode="layer">
+    <path
+       inkscape:connector-curvature="0"
+       id="path955"
+       transform="scale(0.26458333)"
+       d="M 512,64 C 393.18301,64 279.23246,111.19986 195.21616,195.21616 111.19986,279.23246 64,393.18301 64,512 64,630.81699 111.19986,744.76754 195.21616,828.78384 279.23246,912.80014 393.18301,960 512,960 630.81699,960 744.76754,912.80014 828.78384,828.78384 912.80014,744.76754 960,630.81699 960,512 960,393.18301 912.80014,279.23246 828.78384,195.21616 744.76754,111.19986 630.81699,64 512,64 Z M 256,256 H 384 V 384 H 256 Z m 192,0 H 768 V 384 H 448 Z M 256,448 H 384 V 576 H 256 Z m 192,0 H 768 V 576 H 448 Z M 256,640 H 384 V 768 H 256 Z m 192,0 H 768 V 768 H 448 Z"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:18.66666794;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       sodipodi:nodetypes="ssssssssscccccccccccccccccccccccccccccc" />
+  </g>
+</svg>

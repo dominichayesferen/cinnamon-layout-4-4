@@ -1,0 +1,340 @@
+#!/bin/sh
+
+# ==============================================================================
+# cinnamon-layout-system
+#
+# moves around gschema.override files and then recompiles schemas
+#
+#   2017-12-24 rik: initial script
+#   2018-01-18 rik: only killall plank if plank process detected
+#   2018-03-26 rik: adding removeMenuFavs function for unity
+#     - adding changeMenuIcon function for unity
+#   2019-02-23 rik: updating for cinnamon 4.0 compatibility
+#   2019-07-28 rik: adding widescreen layout
+#   2019-11-17 rik: renaming to cinnamon-layout-system
+#   2019-12-13 rik: adding 'traditional' layout ('default' now not specified
+#       in cinnamon-layout, but depends on system defaults)
+#   2019-12-28 rik: updating menu-icon to use update-alternatives locations
+#     - using single standare menu-icon for all layouts
+#   2020-04-12 rik: removing menu-label logic
+#
+# ==============================================================================
+
+# ***TODO: instead of mucking with menu-label in applet, instead put a "z-90-cinnamon-layout-menu-label.gschema.override" file in place to blank out label. Then remove it at the beginning of every menu reset, and add it back only in the layouts that need to blank the label.
+
+# ------------------------------------------------------------------------------
+# Check to ensure running as root
+# ------------------------------------------------------------------------------
+#   No fancy "double click" here because normal user should never need to run
+if [ $(id -u) -ne 0 ];
+then
+    echo
+    echo " *** You must run this script with sudo." >&2
+    echo "Exiting...."
+    sleep 5s
+    exit 1
+fi
+
+# ------------------------------------------------------------------------------
+# Setup
+# ------------------------------------------------------------------------------
+echo
+echo " *** Script Entry: cinnamon-layout-system"
+echo
+# Check for input parameter: required
+
+if ! [ "$1" ];
+then
+    echo
+    echo " *** You must provide a layout input parameter." >&2
+    echo "Exiting...."
+    sleep 5s
+    exit 2
+fi
+
+DIR=/usr/share/cinnamon-layout
+SCHEMA_DIR=/usr/share/glib-2.0/schemas
+
+# ------------------------------------------------------------------------------
+# Functions
+# ------------------------------------------------------------------------------
+resetMenu()
+{
+    # menu applet resets
+    JSON_FILE=/usr/share/cinnamon/applets/menu@cinnamon.org/settings-schema.json
+
+    # reset to show favorite / shutdown options
+    # set menu-custom false so label and icon controlled by gsettings
+    echo "*** Resetting JSON_FILE:"
+    echo "    $JSON_FILE"
+    #jq can't do "sed -i" inplace update, so need to re-create file, then
+    # update ownership (in case run as root)
+    NEW_FILE=$(jq '.["favbox-show"].default=true | .["menu-custom"].default=false' \
+        < $JSON_FILE)
+    echo "$NEW_FILE" > $JSON_FILE
+
+    # Remove any symlinked gschema.override that blanks the app-menu-label
+    # (effectively making the label come from the distro or regional customizer)
+    rm -rf $SCHEMA_DIR/z_90_cinnamon-layout-remove-menu-label.gschema.override
+}
+
+removeMenuFavs()
+{
+    # menu applet updates
+    JSON_FILE=/usr/share/cinnamon/applets/menu@cinnamon.org/settings-schema.json
+    # hide favorite / shutdown options
+    echo "*** Removing Favorites and Session options from JSON_FILE:"
+    echo "    $JSON_FILE"
+    #jq can't do "sed -i" inplace update, so need to re-create file, then
+    # update ownership (in case run as root)
+    NEW_FILE=$(jq '.["favbox-show"].default=false' \
+        < $JSON_FILE)
+    echo "$NEW_FILE" > $JSON_FILE
+}
+
+removeMenuLabel()
+{
+    REMOVE_LABEL_GSCHEMA="$DIR/resources/z_90_cinnamon-layout-remove-menu-label.gschema.override"
+    if ! [ -e $REMOVE_LABEL_GSCHEMA= ];
+    then
+        echo "*** Adding override to blank app-menu-label"
+        ln -s $REMOVE_LABEL_GSCHEMA $SCHEMA_DIR/
+    fi
+}
+
+setClockShort()
+{
+    # world clock calendar applet updates
+    JSON_FILE=/usr/share/cinnamon/applets/calendar@simonwiles.net/settings-schema.json
+    # remove AM / PM from worldclock time panel format
+    echo "*** Setting clock format to 'HH:MM' in JSON_FILE:"
+    echo "      $JSON_FILE"
+    # updates:
+    # - use-custom-format: custom panel clock format
+    # - custom-format: set to "%l:%M" (remove %p: AM / PM)
+    # note: jq can't do "sed -i" inplace update, so need to re-create file
+    NEW_FILE=$(jq '.["use-custom-format"].default=true | .["custom-format"].default="%l:%M"' \
+        < $JSON_FILE)
+    echo "$NEW_FILE" > $JSON_FILE
+}
+
+setClockStandard()
+{
+    # world clock calendar applet updates
+    JSON_FILE=/usr/share/cinnamon/applets/calendar@simonwiles.net/settings-schema.json
+    # set time panel format to 'HH:MM AM/PM'
+    echo "*** Setting clock format to 'HH:MM AM/PM' in JSON_FILE:"
+    echo "      $JSON_FILE"
+    # updates:
+    # - use-custom-format: custom panel clock format
+    # - custom-format: set to "%l:%M %p" (add %p: AM / PM)
+    # note: jq can't do "sed -i" inplace update, so need to re-create file
+    NEW_FILE=$(jq '.["use-custom-format"].default=true | .["custom-format"].default="%l:%M %p"' \
+        < $JSON_FILE)
+    echo "$NEW_FILE" > $JSON_FILE
+}
+
+setClockFull()
+{
+    # world clock calendar applet updates
+    JSON_FILE=/usr/share/cinnamon/applets/calendar@simonwiles.net/settings-schema.json
+    # restore AM / PM to worldclock time panel format
+    echo "*** Setting clock format to 'Day Mon DD, HH:MM AM/PM' in JSON_FILE:"
+    echo "      $JSON_FILE"
+    # updates:
+    # - use-custom-format: custom panel clock format
+    # - custom-format: set to "%a %b %d,%l:%M %p" (date, time)
+    # note: jq can't do "sed -i" inplace update, so need to re-create file
+    NEW_FILE=$(jq '.["use-custom-format"].value=true | .["custom-format"].value="%a %b %d, %l:%M %p"' \
+        < $JSON_FILE)
+    echo "$NEW_FILE" > $JSON_FILE
+}
+
+# ------------------------------------------------------------------------------
+# Main Processing
+# ------------------------------------------------------------------------------
+
+# system level can't be enabling / disabling plank since it should be user specific.....
+# all layouts: disable plank autostart (cupertino will later re-enable)
+
+PLANK_FILE=/etc/xdg/autostart/plank-cinnamon-layout.desktop
+if [ -e $PLANK_FILE ];
+then
+    desktop-file-edit --set-key="X-GNOME-Autostart-enabled" --set-value=false \
+        $PLANK_FILE
+fi
+
+echo
+echo " *** Setting layout to $1"
+echo
+
+case "$1" in
+
+default)
+    # Set cinnamon-layout to default layout
+    rm -rf $SCHEMA_DIR/z_15_cinnamon-layout*.gschema.override
+
+    # reset Main Menu:
+    resetMenu
+
+    # Set clock to standard format
+    setClockStandard
+
+    echo
+    echo " *** finished setting layout to $1"
+    echo
+;;
+
+traditional)
+    # Set cinnamon-layout to traditional layout
+    rm -rf $SCHEMA_DIR/z_15_cinnamon-layout*.gschema.override
+    ln -s $DIR/resources/z_15_cinnamon-layout-traditional.gschema.override \
+        $SCHEMA_DIR/
+
+    # reset Main Menu
+    resetMenu
+
+    # Set clock to standard format
+    setClockStandard
+
+    echo
+    echo " *** Finished setting layout to $1"
+    echo
+;;
+
+redmond7)
+    # Set cinnamon-layout to redmond7 layout
+    rm -rf $SCHEMA_DIR/z_15_cinnamon-layout*.gschema.override
+    ln -s $DIR/resources/z_15_cinnamon-layout-redmond7.gschema.override \
+        $SCHEMA_DIR/
+
+    # reset Main Menu
+    resetMenu
+
+    # remove Menu Label
+    removeMenuLabel
+
+    # Set clock to standard format
+    setClockStandard
+
+    echo
+    echo " *** Finished setting layout to $1"
+    echo
+;;
+
+unity)
+    # Set cinnamon-layout to unity layout
+    rm -rf $SCHEMA_DIR/z_15_cinnamon-layout*.gschema.override
+    ln -s $DIR/resources/z_15_cinnamon-layout-unity.gschema.override \
+        $SCHEMA_DIR/
+
+    # reset Main Menu
+    resetMenu
+
+    # remove Favorites and Session options from Main Menu
+    removeMenuFavs
+
+    # remove Menu Label
+    removeMenuLabel
+
+    # set clock to full format (date, time)
+    setClockFull
+
+    echo
+    echo " *** Finished setting layout to $1"
+    echo
+;;
+
+cupertino)
+    # Set cinnamon-layout to cupertino layout
+    rm -rf $SCHEMA_DIR/z_15_cinnamon-layout*.gschema.override
+    ln -s $DIR/resources/z_15_cinnamon-layout-cupertino.gschema.override \
+        $SCHEMA_DIR/
+
+    # reset Main Menu
+    resetMenu
+
+    # set clock to full format (date, time)
+    setClockFull
+
+    # remove Favorites and Session options from Main Menu
+    # rik: not enabling for now so as to not confuse users... but it is
+    # "cleaner looking" with favorties removed
+    # removeMenuFavs
+
+    # set Plank to autostart
+    if ! [ -e $PLANK_FILE ];
+    then
+        $RUN_AS_USER cp /usr/share/applications/plank.desktop $PLANK_FILE $CLOSE
+        desktop-file-edit --add-only-show-in="X-Cinnamon" $PLANK_FILE
+        desktop-file-edit --set-name="Plank (Cinnamon-Layout)" $PLANK_FILE
+    fi
+    desktop-file-edit --set-key="X-GNOME-Autostart-enabled" --set-value=true \
+        $PLANK_FILE
+
+    echo
+    echo " *** Finished setting layout to $1"
+    echo
+;;
+
+widescreen)
+    # Set cinnamon-layout to widescreen layout
+    rm -rf $SCHEMA_DIR/z_15_cinnamon-layout*.gschema.override
+    ln -s $DIR/resources/z_15_cinnamon-layout-widescreen.gschema.override \
+        $SCHEMA_DIR/
+
+    # reset Main Menu
+    resetMenu
+
+    # remove Menu Label
+    removeMenuLabel
+
+    # set clock to short format (no AM/PM)
+    setClockShort
+
+    echo
+    echo " *** Finished setting layout to $1"
+    echo
+;;
+
+gnome2)
+    # Set cinnamon-layout to gnome2 layout
+    rm -rf $SCHEMA_DIR/z_15_cinnamon-layout*.gschema.override
+    ln -s $DIR/resources/z_15_cinnamon-layout-gnome2.gschema.override \
+        $SCHEMA_DIR/
+
+    # reset Main Menu
+    resetMenu
+
+    # set clock to full format (date, time)
+    setClockFull
+
+    echo
+    echo " *** Finished setting layout to $1"
+    echo
+;;
+
+*)
+    # Layout not supported... don't do anything!
+    echo
+    echo " *** Layout not supported: $1" >&2    
+    echo "Exiting...."
+    sleep 5s
+    exit 2
+;;
+
+esac
+
+# --------------------------------------------------------------------------
+# Compile schemas affected by cinnamon-layout-system
+# --------------------------------------------------------------------------
+
+# MAIN System schemas: Sending any output to null (if any key not found)
+glib-compile-schemas /usr/share/glib-2.0/schemas/ || true;
+sleep 1
+
+echo
+echo " *** Script Exit: cinnamon-layout-system"
+echo
+
+exit 0

@@ -1,0 +1,22 @@
+# ==============================================================================
+# z_90_cinnamon-layout-remove-menu-label.gschema.override
+#
+#   This file will be symlinked in when setting a system-level cinnamon-layout
+#       that does NOT need a label (unity, widescreen, redmond7, etc.)
+#
+#   This way, the distro or regional label will not be wiped out so that it
+#       can be restored easily for cinnamon-layouts that use the label.
+#
+#   If same key overridden in 2 files, "last wins" regarding filenames.
+#       cinnamon-layout gschema.override files begin with "z_15_*", to override
+#       any distribution-specific gschema.override files.
+#
+#   After modifying these .override files, reload with:
+#       glib-compile-schemas /usr/share/glib-2.0/schemas/
+#
+#   2020-04-12 rik: initial script
+#
+# ==============================================================================
+
+[org.cinnamon]
+app-menu-label = ''

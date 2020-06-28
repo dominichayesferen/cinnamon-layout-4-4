@@ -1,0 +1,22 @@
+Package: cinnamon-layout-4-4
+Version: 4.4.8
+Architecture: all
+Maintainer: Rik Shaw <rikshaw76@gmail.com>
+Installed-Size: 1249
+Depends: cinnamon (>= 4.4), cinnamon-common (>= 4.4), cinnamon-control-center (>= 4.4), cinnamon-desktop-data (>= 4.4), cinnamon-l10n (>= 4.4), cinnamon-screensaver (>= 4.4), cinnamon-session (>= 4.4), cinnamon-settings-daemon (>= 4.4), cjs (>= 4.4), jq, muffin (>= 4.4), nemo (>= 4.4), plank, python2 | python:any, python-gi, zenity
+Conflicts: cinnamon-layout-4-0, cinnamon-layout-4-2
+Replaces: cinnamon-layout-4-0, cinnamon-layout-4-2
+Provides: cinnamon-layout-4-0, cinnamon-layout-4-2
+Section: utils
+Priority: optional
+Homepage: https://github.com/wasta-linux/cinnamon-layout
+Description: Cinnamon Layout Switcher
+ Layout switcher for Cinnamon Desktop. Current layout options include:
+   - Traditional (30px bottom panel, non-grouped window list)
+   - Redmond7 (36px bottom panel, grouped window list)
+   - Cupertino (28px top panel, uses 'plank' for the bottom dock)
+   - Unity (40px left panel, 28px top panel)
+   - Gnome2 (28px top and bottom panels)
+   - Widescreen (40px left panel)
+ .
+ The 'Main Menu' icon is configurable using update-alternatives.

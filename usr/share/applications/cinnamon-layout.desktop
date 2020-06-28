@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Cinnamon-Layout
+Comment=Change interface betweeen different layouts
+Exec=cinnamon-layout
+Terminal=false
+Type=Application
+Icon=cinnamon-layout
+Categories=Application;System;
+Keywords=wasta;
+OnlyShowIn=X-Cinnamon;
