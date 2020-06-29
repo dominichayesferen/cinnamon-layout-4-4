@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Cinnamon-Layout
+Name=Desktop Layout
 Comment=Change interface betweeen different layouts
-Exec=cinnamon-layout
+Exec=cinnamon-settings ubuntucinnamondesktoplayout
 Terminal=false
 Type=Application
 Icon=cinnamon-layout

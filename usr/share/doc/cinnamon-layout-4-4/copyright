@@ -4,6 +4,7 @@ Source: https://github.com/wasta-linux/cinnamon-layout
 
 Files: *
 Copyright: 2019-2020 Rik Shaw <rikshaw76@gmail.com>
+           2020 Dominic Hayes <ferenosdev@outlook.com>
 License: GPL-3.0+
 
 Files: install-files/applets/calendar@simonwiles.net

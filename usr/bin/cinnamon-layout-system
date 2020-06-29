@@ -325,6 +325,10 @@ gnome2)
 
 esac
 
+#Set the default value in gsettings as well
+echo "[com.ubuntu-cinnamon-remix.cinnamon-layout]
+current-layout='$1'" > $SCHEMA_DIR/z_15_ubuntu-cinnamon-remix_layout-switcher_default.gschema.override
+
 # --------------------------------------------------------------------------
 # Compile schemas affected by cinnamon-layout-system
 # --------------------------------------------------------------------------

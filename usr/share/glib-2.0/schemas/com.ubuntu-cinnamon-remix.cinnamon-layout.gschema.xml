@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/com/ubuntu-cinnamon-remix/cinnamon-layout/" id="com.ubuntu-cinnamon-remix.cinnamon-layout" gettext-domain="@GETTEXT_PACKAGE@">
+    <key type="s" name="current-layout">
+      <default>"default"</default>
+      <summary>The currently applied layout</summary>
+      <description>Can only be changed through System Settings, Desktop Layout</description>
+    </key>
+  </schema>
+</schemalist>
